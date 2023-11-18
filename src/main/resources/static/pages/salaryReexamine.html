@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>薪酬标准登记复核</title>
+
+    <script src="../js/vue.js"></script>
+    <script src="../elementui/index.js"></script>
+    <link rel="stylesheet" href="../elementui/index.css">
+    <script src="../js/axios-0.18.0.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-form ref="form" :model="salary" label-width="80px">
+        <el-row>
+            <h5 style="color: blue">你正在做的业务是：人力资源--薪酬标准管理--薪酬标准登记复核</h5>
+
+            <el-form-item>
+                <el-button size="mini" type="primary" @click="submitFrom" style="float:right">复核通过</el-button>
+            </el-form-item>
+        </el-row>
+
+        <el-row :gutter="20">
+            <el-col :span="8">
+                <el-form-item label="薪酬编号">
+                    <el-input :placeholder="salary.salaryId" v-model="salary.salaryId" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="薪酬名称">
+                    <el-input v-model="salary.salaryName" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="薪酬总额">
+                    <el-input :placeholder="total" v-model="salary.total" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="制定人">
+                    <el-input v-model="salary.maker" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="登记人">
+                    <el-input v-model="salary.reexaminePeople" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="登记时间">
+                    <el-input :placeholder="salary.bookTime" v-model="salary.bookTime" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="复核意见">
+                    <el-input type="textarea" :rows="3" placeholder="请输入内容" v-model="salary.reexamine"></el-input>
+                </el-form-item>
+            </el-col>
+
+        </el-row>
+
+        <el-row :gutter="20">
+            <el-col :span="6">
+                序号
+            </el-col>
+            <el-col :span="8">
+                薪酬项目名称
+            </el-col>
+            <el-col :span="10">
+                金额
+            </el-col>
+            <br>
+            <hr>
+            <el-col :span="6">
+                1
+            </el-col>
+            <el-col :span="8">
+                基本工资
+            </el-col>
+            <el-col :span="8">
+                <el-input v-model.number="salary.basic" placeholder=""></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+            <el-col :span="6">
+                2
+            </el-col>
+            <el-col :span="8">
+                交通补助
+            </el-col>
+            <el-col :span="8">
+                <el-input v-model.number="salary.traffic" placeholder=""></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+
+            <el-col :span="6">
+                3
+            </el-col>
+            <el-col :span="8">
+                午餐补助
+            </el-col>
+            <el-col :span="8">
+                <el-input v-model.number="salary.lunch" placeholder=""></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+            <el-col :span="6">
+                4
+            </el-col>
+            <el-col :span="8">
+                通信补助
+            </el-col>
+            <el-col :span="8">
+                <el-input v-model.number="salary.communication" placeholder=""></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+
+            <el-col :span="6">
+                5
+            </el-col>
+            <el-col :span="8">
+                养老保险
+            </el-col>
+            <el-col :span="8">
+                <el-input :placeholder="endowmentInsurance" v-model.number="salary.endowmentInsurance"
+                          :disabled="true"></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+
+            <el-col :span="6">
+                6
+            </el-col>
+            <el-col :span="8">
+                失业保险
+            </el-col>
+            <el-col :span="8">
+                <el-input :placeholder="unemployment" v-model.number="salary.unemployment" :disabled="true"></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+
+            <el-col :span="6">
+                7
+            </el-col>
+            <el-col :span="8">
+                医疗保险
+            </el-col>
+            <el-col :span="8">
+                <el-input :placeholder="medical" v-model.number="salary.medical" :disabled="true"></el-input>
+            </el-col>
+            <br><br>
+            <hr>
+
+            <el-col :span="6">
+                8
+            </el-col>
+            <el-col :span="8">
+                住房公积金
+            </el-col>
+            <el-col :span="8">
+                <el-input :placeholder="housingFund" v-model.number="salary.housingFund" :disabled="true"></el-input>
+            </el-col>
+        </el-row>
+    </el-form>
+
+
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        mounted() {
+            this.getInfo()
+        },
+        methods: {
+            getInfo() {
+                axios({
+                    method: 'get',
+                    url: 'http://localhost:8080/salary/salaryReexamine'
+                }).then(resp => {
+                    this.salary=resp.data.data;
+                })
+            },
+            submitFrom() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/salary/salaryReexamine",
+                    data: this.salary
+                }).then(resp => {
+                    if (resp.data === 200) {
+                        this.$message({
+                            message: '复核成功',
+                            type: 'success'
+                        });
+                    }else {
+                        this.$message({
+                            message: '复核失败',
+                            type: 'success'
+                        });
+                    }
+                })
+            }
+        },
+        data() {
+            return {
+                salary: {
+                    salaryId: '',
+                    salaryName: '',
+                    maker: '',
+                    reexaminePeople: '',
+                    bookTime: '',
+                    basic: '',
+                    traffic: '',
+                    lunch: '',
+                    communication: '',
+                    endowmentInsurance: '',
+                    unemployment: '',
+                    medical: '',
+                    housingFund: '',
+                    total: '',
+                    reexamine:''
+                },
+            }
+        },
+    })
+</script>
+</body>
+</html>

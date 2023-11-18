@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>薪酬列表</title>
+
+    <script src="../js/vue.js"></script>
+    <script src="../elementui/index.js"></script>
+    <link rel="stylesheet" href="../elementui/index.css">
+    <script src="../js/axios-0.18.0.js"></script>
+</head>
+<body>
+<div id="app">
+    <h5 style="color: blue">你正在做的业务是：人力资源--薪酬标准管理--薪酬列表</h5><br><br>
+
+    <div>符合条件的薪酬总数：{{ totalCount }} 列</div>
+
+    <template>
+        <el-table
+                :data="tableData"
+                height="250"
+                border
+                style="width: 100%"
+        >
+            <el-table-column
+                    prop="salaryId"
+                    label="薪酬标准编号"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="salaryName"
+                    label="薪酬标准名称"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="salaryTotal"
+                    align="center"
+                    label="薪酬总额">
+            </el-table-column>
+            <el-table-column
+                    prop="maker"
+                    align="center"
+                    label="制定人">
+            </el-table-column>
+            <el-table-column
+                    prop="booker"
+                    align="center"
+                    label="登记人">
+            </el-table-column>
+            <el-table-column
+                    prop="bookTime"
+                    align="center"
+                    label="登记时间">
+            </el-table-column>
+
+
+            <el-table-column
+                    label="复核"
+                    show-overflow-tooltip>
+                <template slot-scope="scope">
+                    <el-button type="primary" size="min"  @click="check(scope.row)">修改</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+            //当页面完成后发送异步请求
+            this.selectList();
+
+        },
+        methods: {
+            selectList() {
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/salary/salaryUpdateList",
+                     // data:this.reexamineList
+                }).then(resp => {
+                    this.tableData = resp.data.data.rows;
+                    this.totalCount = resp.data.data.total;
+                })
+            },
+
+            check(row){
+                var newPage = window.open()
+                window.open('about:blank')
+
+                axios({
+                    method: 'post',
+                    url:'http://localhost:8080/salary/getUpdate/'+row.salaryId
+                }).then( resp =>{
+                    newPage.location.href = 'http://localhost:8080/pages/salaryUpdate.html'
+                })
+            }
+
+        },
+        data() {
+            return {
+                //总记录数
+                totalCount: '',
+
+                tableData:[{
+                    salaryId: '',
+                    salaryName: '',
+                    maker: '',
+                    booker: '',
+                    bookTime: '',
+                    total: '',
+                    }],
+            }
+        }
+
+    })
+</script>
+</body>
+</html>

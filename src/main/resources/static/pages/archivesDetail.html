@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人力资源档案登记明细</title>
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+    </style>
+
+    <script src="../js/vue.js"></script>
+    <script src="../elementui/index.js"></script>
+    <link rel="stylesheet" href="../elementui/index.css">
+    <script src="../js/axios-0.18.0.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <el-form ref="form" :model="archives" label-width="80px">
+        <el-row>
+            <h5 style="color: blue">你正在做的业务是：人力资源--人力资源档案管理--人力资源档案明细</h5>
+
+            <el-form-item>
+                <el-button type="primary" @click.native="updateArchives ">修改档案</el-button>
+                <el-button type="primary" @click.native="deleteArchives ">删除档案</el-button>
+                <el-button type="primary" @click.native="returnArchives ">返回</el-button>
+            </el-form-item>
+            <hr>
+        </el-row>
+        <el-upload
+                class="avatar-uploader"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+        <el-row :gutter="20">
+            <el-col :span="24">
+                <el-form-item label="档案编号">
+                    <el-input :placeholder="archives.archivesId" v-model="archives.archivesId"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="一级机构">
+                    <el-input :placeholder="archives.level1" v-model="archives.level1" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="6">
+                <el-form-item label="二级结构">
+                    <el-input :placeholder="archives.level2" v-model="archives.level2" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="三级机构">
+                    <el-input :placeholder="archives.level3" v-model="archives.level3" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="职位分类">
+                    <el-input :placeholder="archives.category" v-model="archives.category" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="6">
+                <el-form-item label="职位名称">
+                    <el-input :placeholder="archives.namePosition" v-model="archives.namePosition"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+                <el-form-item label="职称">
+                    <el-input :placeholder="archives.category" v-model="archives.category" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="姓名">
+                    <el-input :placeholder="archives.employeeName" v-model="archives.employeeName"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="性别">
+                    <el-input :placeholder="archives.sex" v-model="archives.sex" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="EMAIL">
+                    <el-input :placeholder="archives.email" v-model="archives.email" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="电话">
+                    <el-input :placeholder="archives.phone" v-model="archives.phone" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="QQ">
+                    <el-input :placeholder="archives.qq" v-model="archives.qq" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="手机">
+                    <el-input :placeholder="archives.mobilePhone" v-model="archives.mobilePhone"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+                <el-form-item label="住址">
+                    <el-input :placeholder="archives.address" v-model="archives.address" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="邮编">
+                    <el-input :placeholder="archives.postcode" v-model="archives.postcode" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="国籍">
+                    <el-input :placeholder="archives.nationality" v-model="archives.nationality"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="出身地">
+                    <el-input :placeholder="archives.origin" v-model="archives.origin" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="生日">
+                    <el-input :placeholder="archives.birth" v-model="archives.birth" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="民族">
+                    <el-input :placeholder="archives.people" v-model="archives.people" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+
+            <el-col :span="6">
+                <el-form-item label="宗教信仰">
+                    <el-input :placeholder="archives.faith" v-model="archives.faith" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="政治面貌">
+                    <el-input :placeholder="archives.status" v-model="archives.status" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="身份证">
+                    <el-input :placeholder="archives.identity" v-model="archives.identity" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="社会保障">
+                    <el-input :placeholder="archives.socialId" v-model="archives.socialId" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="年龄">
+                    <el-input :placeholder="archives.age" v-model="archives.age" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="学历">
+                    <el-input :placeholder="archives.education" v-model="archives.education"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="教育年限">
+                    <el-input :placeholder="archives.educationYear" v-model="archives.educationYear"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+
+            <el-col :span="6">
+                <el-form-item label="学历专业">
+                    <el-input :placeholder="archives.professional" v-model="archives.professional"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="薪酬标准">
+                    <el-input :placeholder="archives.salary" v-model="archives.salary" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="开户行">
+                    <el-input :placeholder="archives.bankid" v-model="archives.bankid" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="账号">
+                    <el-input :placeholder="archives.eaccount" v-model="archives.eaccount" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+
+            <!--            <el-col :span="6">-->
+            <!--                <el-form-item label="变更人">-->
+            <!--                    <el-input :placeholder="archives.updatePeople" v-model="archives.updatePeople" :disabled="true"></el-input>-->
+            <!--                </el-form-item>-->
+            <!--            </el-col>-->
+
+            <!--            <el-col :span="6">-->
+            <!--                <el-form-item label="变更时间">-->
+            <!--                    <el-input :placeholder="archives.updateTime" v-model="archives.updateTime" :disabled="true"></el-input>-->
+            <!--                </el-form-item>-->
+            <!--            </el-col>-->
+
+            <el-col :span="6">
+                <el-form-item label="特长">
+                    <el-input :placeholder="archives.specialty" v-model="archives.specialty"
+                              :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="爱好">
+                    <el-input :placeholder="archives.hobby" v-model="archives.hobby" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="档案附加">
+                    <el-upload
+                            class="upload-demo"
+                            drag
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            multiple>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    </el-upload>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="个人履历">
+                    <el-input type="textarea" v-model="archives.experience"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="家庭关系">
+                    <el-input type="textarea" v-model="archives.family"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="备注">
+                    <el-input type="textarea" v-model="archives.ecomment"></el-input>
+                </el-form-item>
+            </el-col>
+
+
+        </el-row>
+    </el-form>
+
+</div>
+
+
+<script>
+    new Vue({
+        el: '#app',
+        mounted() {
+            //当页面完成后，就发送页面请求
+            this.getArchives()
+        },
+        methods: {
+            //图片上传
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+
+            //修改
+            updateArchives() {
+                console.log(this.archives);
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/archives/getUpdateId/" + this.archives.archivesId,
+                    data: this.archives
+                }).then(resp => {
+                    if (resp.data.code === 200) {
+                        var newPage = window.open()
+                        window.open('about:blank')
+                        newPage.location.href = 'http://localhost:8080/pages/archivesUpdate.html'
+
+                        this.$message({
+                            message: '登记成功',
+                            type: 'success'
+                        });
+                    }else {
+                        this.$message({
+                            message: '提交失败',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+
+            //删除
+            deleteArchives() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/archives/archivesDelete/" + this.archives.archivesId,
+                    data: this.archives
+                }).then(resp => {
+                    if (resp.data.code === 200) {
+                        var newPage = window.open()
+                        window.open('about:blank')
+                        newPage.location.href = 'http://localhost:8080/pages/archivesUpdate.html'
+
+                        this.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+
+            getArchives() {
+                axios({
+                    method: 'get',
+                    url: 'http://localhost:8080/archives/getDetail'
+                }).then(resp => {
+                    this.archives = resp.data.data
+                })
+            },
+
+
+            //计数器
+            handleChange(value) {
+                console.log(value);
+            }
+        },
+
+        data() {
+            return {
+                //档案信息的类型
+                archives: {
+                    archivesId: '',
+                    level1: "",
+                    level2: "",
+                    level3: '',
+                    category: '',
+                    namePosition: '',
+                    title: '',
+                    employeeName: '',
+                    sex: '',
+                    nationality: '',
+                    people: '',
+                    birth: '',
+                    origin: '',
+                    identity: '',
+                    socialId: '',
+                    age: '',
+                    education: '',
+                    educationYear: '0',
+                    faith: '',
+                    status: '',
+                    professional: '',
+                    picture: '',
+                    email: '',
+                    phone: '',
+                    qq: '',
+                    mobilePhone: '',
+                    address: '',
+                    postcode: '',
+                    bankid: '',
+                    eaccount: '',
+                    updateTime: '',
+                    specialty: '',
+                    hobby: '',
+                    experience: '',
+                    family: '',
+                    ecomment: '',
+                    salary: '',
+                    updatePeople: ''
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

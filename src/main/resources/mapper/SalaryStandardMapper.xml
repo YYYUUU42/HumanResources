@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.SalaryStandardMapper">
+
+    <resultMap id="BaseResultMap" type="com.domain.entity.SalaryStandard">
+            <id property="salaryId" column="salary_id" jdbcType="VARCHAR"/>
+            <result property="salaryName" column="salary_name" jdbcType="VARCHAR"/>
+            <result property="maker" column="maker" jdbcType="VARCHAR"/>
+            <result property="booker" column="booker" jdbcType="VARCHAR"/>
+            <result property="bookTime" column="book_time" jdbcType="TIMESTAMP"/>
+            <result property="basic" column="basic" jdbcType="DECIMAL"/>
+            <result property="traffic" column="traffic" jdbcType="DECIMAL"/>
+            <result property="lunch" column="lunch" jdbcType="DECIMAL"/>
+            <result property="communication" column="communication" jdbcType="DECIMAL"/>
+            <result property="endowmentInsurance" column="endowment_insurance" jdbcType="DECIMAL"/>
+            <result property="unemployment" column="unemployment" jdbcType="DECIMAL"/>
+            <result property="medical" column="medical" jdbcType="DECIMAL"/>
+            <result property="housingFund" column="housing_fund" jdbcType="DECIMAL"/>
+            <result property="reexamine" column="reexamine" jdbcType="DECIMAL"/>
+            <result property="reexamineState" column="reexamine_state" jdbcType="DECIMAL"/>
+            <result property="updatePeople" column="update_people" jdbcType="DECIMAL"/>
+            <result property="reexaminePeople" column="reexamine_people" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        salary_id,salary_name,maker,
+        booker,book_time,basic,
+        traffic,lunch,communication,
+        endowment_insurance,unemployment,medical,
+        housing_fund
+    </sql>
+
+    <select id="salaryIdLike" resultType="com.domain.entity.SalaryStandard" resultMap="BaseResultMap">
+        select * from salary_standard where  cast(salary_id as char) like '%${salary}%' and reexamine_state =0
+    </select>
+</mapper>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人力资源档案查询</title>
+</head>
+
+<script src="../js/vue.js"></script>
+<script src="../elementui/index.js"></script>
+<link rel="stylesheet" href="../elementui/index.css">
+<script src="../js/axios-0.18.0.js"></script>
+
+<body>
+<div id="app">
+    <h5 style="color: blue">你正在做的业务是：人力资源--人力资源档案管理--人力资源档案查询</h5><br>
+
+    <el-form ref="form" :model="Echeck" label-width="80px">
+        <el-form-item>
+            <el-button size="mini" type="primary" @click="aaa" style="float:right">搜索</el-button>
+        </el-form-item>
+        <hr>
+        <el-row :gutter="20">
+            <el-col :span="13">
+                <el-form-item label="1级机构">
+                    <el-select v-model="Echeck.level1" placeholder="请选择">
+                        <el-option label=" 集团" value="集团"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col :span="13">
+                <el-form-item label="2级机构">
+                    <el-select v-model="Echeck.level2" placeholder="请选择">
+                        <el-option label="软件公司" value="软件公司"></el-option>
+                        <el-option label="外包公司" value="外包公司"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+            <el-col :span="13">
+                <el-form-item label="3级机构">
+                    <el-select v-model="Echeck.level3" placeholder="请选择">
+                        <el-option label="外包组" value="外包组"></el-option>
+                        <el-option label="开发组" value="开发组"></el-option>
+                        <el-option label="运维组" value="运维组"></el-option>
+                        <el-option label="测试组" value="测试组"></el-option>
+                    </el-select>
+
+                </el-form-item>
+            </el-col>
+            <el-col :span="13">
+                <el-form-item label="职位分类">
+                    <el-select v-model="Echeck.category" placeholder="请选择">
+                        <el-option label="销售" value="销售"></el-option>
+                        <el-option label="开发" value="开发"></el-option>
+                        <el-option label="测试" value="测试"></el-option>
+                    </el-select>
+
+                </el-form-item>
+            </el-col>
+            <el-col :span="24">
+                <el-form-item label="职位名称">
+                    <el-select v-model="Echeck.namePosition" placeholder="请选择">
+                        <el-option label="区域经理" value="区域经理"></el-option>
+                        <el-option label="前端开发" value="前端开发"></el-option>
+                        <el-option label="后端开发" value="后端开发"></el-option>
+                        <el-option label="运维维护" value="运维维护"></el-option>
+                    </el-select>
+
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="建档时间">
+                    <el-col :span="11">
+                        <el-date-picker type="date" placeholder="选择日期" v-model="Echeck.openTime"
+                                        style="width: 100%;"></el-date-picker>
+                    </el-col>
+                    <el-col class="line" :span="2">-</el-col>
+                    <el-col :span="11">
+                        <el-date-picker type="date" placeholder="选择日期" v-model="Echeck.endTime"
+                                        style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+            </el-col>
+        </el-row>
+    </el-form>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        methods: {
+            aaa() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/archives/selectLevel",
+                    data: this.Echeck
+                }).then (resp=>{
+                    if (resp.data.code === 200) {
+                        var newPage = window.open()
+                        window.open('about:blank')
+                        newPage.location.href = 'http://localhost:8080/pages/selectList.html'
+                    }
+                })
+            }
+        },
+        data() {
+            return {
+                Echeck: {
+                    level1: '',
+                    level2: '',
+                    level3: '',
+                    category: '',
+                    namePosition: '',
+                    openTime: '',
+                    endTime: ''
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

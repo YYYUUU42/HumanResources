@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人力资源档案查询结果</title>
+
+    <script src="../js/vue.js"></script>
+    <script src="../elementui/index.js"></script>
+    <link rel="stylesheet" href="../elementui/index.css">
+    <script src="../js/axios-0.18.0.js"></script>
+</head>
+<body>
+<div id="app">
+    <h5 style="color: blue">你正在做的业务是：人力资源--人力资源档案管理--人力资源档案查询</h5><br><br>
+
+    <div>符合条件的人力资源档案总数：{{ totalCount }} 列</div>
+
+    <template>
+        <el-table
+                :data="tableData"
+                height="250"
+                border
+                style="width: 100%"
+        >
+            <el-table-column
+                    prop="archivesId"
+                    label="档案编号"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="employeeName"
+                    label="姓名"
+                    align="center"
+            >
+            </el-table-column>
+            <el-table-column
+                    prop="sex"
+                    align="center"
+                    label="性别">
+            </el-table-column>
+            <el-table-column
+                    prop="level1"
+                    align="center"
+                    label="一级机构">
+            </el-table-column>
+            <el-table-column
+                    prop="level2"
+                    align="center"
+                    label="二级机构">
+            </el-table-column>
+            <el-table-column
+                    prop="level3"
+                    align="center"
+                    label="三级机构">
+            </el-table-column>
+
+            <el-table-column
+                    prop="namePosition"
+                    align="center"
+                    label="职位名称">
+            </el-table-column>
+
+            <el-table-column
+                    label="查询"
+                    show-overflow-tooltip>
+                <template slot-scope="scope">
+                    <el-button type="primary" size="min"  @click="check(scope.row)">查看明细</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        mounted() {
+            //当页面完成后发送异步请求
+            this.selectList();
+
+        },
+        methods: {
+            selectList() {
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/archives/selectList",
+                     // data:this.reexamineList
+                }).then(resp => {
+                    this.tableData = resp.data.data.rows;
+                    this.totalCount = resp.data.data.total;
+                })
+            },
+
+            check(row){
+                var newPage = window.open()
+                window.open('about:blank')
+
+                axios({
+                    method: 'post',
+                    url:'http://localhost:8080/archives/getDetailId/'+row.archivesId
+                }).then( resp =>{
+                    newPage.location.href = 'http://localhost:8080/pages/archivesDetail.html'
+                })
+            }
+
+        },
+        data() {
+            return {
+                //总记录数
+                totalCount: '',
+
+                tableData:[{
+                    archivesId: '',
+                    employeeName: '',
+                    sex: '',
+                    level1: '',
+                    level2: '',
+                    level3: '',
+                    namePosition:'',
+                    }],
+            }
+        }
+
+    })
+</script>
+</body>
+</html>

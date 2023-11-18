@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>薪酬标准查询</title>
+</head>
+
+<script src="../js/vue.js"></script>
+<script src="../elementui/index.js"></script>
+<link rel="stylesheet" href="../elementui/index.css">
+<script src="../js/axios-0.18.0.js"></script>
+
+<body>
+<div id="app">
+    <h5 style="color: blue">你正在做的业务是：人力资源--薪酬标准管理--薪酬标准查询</h5><br>
+
+
+    <el-form ref="form" :model="sCheck" label-width="80px">
+        <el-form-item>
+            <el-button size="mini" type="primary" @click="aaa" style="float:right">查询</el-button>
+        </el-form-item>
+        <hr>
+
+            <el-form-item label="标准编号">
+                <el-input v-model="sCheck.salaryId" placeholder=""></el-input>
+            </el-form-item>
+
+        <el-form-item label="关键字">
+            <el-input v-model="sCheck.keyWord" placeholder=""></el-input>
+        </el-form-item>
+
+
+        <el-col :span="8">
+                <el-form-item label="登记时间">
+                    <el-col :span="11">
+                        <el-date-picker type="date" placeholder="选择日期" v-model="sCheck.openTime"
+                                        style="width: 100%;"></el-date-picker>
+                    </el-col>
+                    <el-col class="line" :span="2">-</el-col>
+                    <el-col :span="11">
+                        <el-date-picker type="date" placeholder="选择日期" v-model="sCheck.endTime"
+                                        style="width: 100%;"></el-date-picker>
+                    </el-col>
+                </el-form-item>
+            </el-col>
+
+    </el-form>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        methods: {
+            aaa() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/salary/salaryUpdateSelect",
+                    data: this.sCheck
+                }).then (resp=>{
+                    if (resp.data.code === 200) {
+                        var newPage = window.open()
+                        window.open('about:blank')
+                        newPage.location.href = 'http://localhost:8080/pages/salaryUpdateList.html'
+                    }
+                })
+            }
+        },
+        data() {
+            return {
+                sCheck:{
+                    salaryId:'',
+                    keyWord:'',
+                    openTime:'',
+                    endTime:''
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

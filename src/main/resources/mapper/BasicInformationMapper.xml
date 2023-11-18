@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="generator.mapper.BasicInformationMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.BasicInformation">
+            <result property="employeeid" column="employeeId" jdbcType="VARCHAR"/>
+            <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
+            <result property="sex" column="sex" jdbcType="VARCHAR"/>
+            <result property="nationality" column="nationality" jdbcType="VARCHAR"/>
+            <result property="people" column="people" jdbcType="VARCHAR"/>
+            <result property="birth" column="birth" jdbcType="VARCHAR"/>
+            <result property="identity" column="identity" jdbcType="VARCHAR"/>
+            <result property="socialId" column="social_id" jdbcType="VARCHAR"/>
+            <result property="age" column="age" jdbcType="INTEGER"/>
+            <result property="education" column="education" jdbcType="VARCHAR"/>
+            <result property="professional" column="professional" jdbcType="VARCHAR"/>
+            <result property="picture" column="picture" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        employeeId,employee_name,sex,
+        nationality,people,birth,
+        identity,social_id,age,
+        education,professional,picture
+    </sql>
+</mapper>

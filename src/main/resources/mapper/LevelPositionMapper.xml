@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="generator.mapper.LevelPositionMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.LevelPosition">
+            <result property="employeeid" column="employeeId" jdbcType="VARCHAR"/>
+            <result property="level1" column="level1" jdbcType="VARCHAR"/>
+            <result property="level2" column="level2" jdbcType="VARCHAR"/>
+            <result property="level3" column="level3" jdbcType="VARCHAR"/>
+            <result property="category" column="category" jdbcType="VARCHAR"/>
+            <result property="namePosition" column="name_position" jdbcType="VARCHAR"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        employeeId,level1,level2,
+        level3,category,name_position,
+        title
+    </sql>
+</mapper>

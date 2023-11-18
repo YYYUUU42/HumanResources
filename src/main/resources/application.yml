@@ -1,0 +1,43 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/human_resources?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 5MB
+  batch:
+    job:
+      enabled: false
+  redis:
+    host: localhost  #服务器地址 你服务器或本机地址
+    port: 6379           #连接端口
+    database: 0          #数据库索引，默认0
+    jedis:
+      pool:
+        max-active: 8    #连接池最大连接数(使用负值表示没有限制)
+        max-wait: -1     #最大阻塞等待时间(使用负值表示没有限制)
+        max-idle: 8      #最大空闲连接数
+        min-idle: 0      #最小空闲连接数
+    timeout: 50000        #连接超时时间（毫秒）
+
+mybatis-plus:
+  configuration:
+    # ??
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: delFlag
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: auto
+
+oss:
+  accessKey: SqTjLlxmecmn7adTmYhMBHqpHWyp57g6R9K7RGJs
+  secretKey: h_ZjEr-I2TZifkWOgppRqkihqzPlRxV6SvnruV6k
+  bucket: yu-shop-demo2
+  testDomainName: http://rnbtqpzpe.hn-bkt.clouddn.com/

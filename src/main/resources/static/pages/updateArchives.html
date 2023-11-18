@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>人力资源档案登记</title>
+    <style>
+        .el-table .warning-row {
+            background: oldlace;
+        }
+
+        .el-table .success-row {
+            background: #f0f9eb;
+        }
+    </style>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+    </style>
+
+    <script src="../js/vue.js"></script>
+    <script src="../elementui/index.js"></script>
+    <link rel="stylesheet" href="../elementui/index.css">
+    <script src="../js/axios-0.18.0.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <el-form ref="form" :model="archives" label-width="80px">
+        <el-row>
+            <h5 style="color: blue">你正在做的业务是：人力资源--人力资源档案管理--人力资源档案登记变更</h5>
+
+            <el-form-item>
+                <el-button type="primary" @click="submitFrom">通过复核提交</el-button>
+                <el-button @click="resetForm('archives')">重置</el-button>
+            </el-form-item>
+            <hr>
+        </el-row>
+        <el-upload
+                class="avatar-uploader"
+                action="https://jsonplaceholder.typicode.com/posts/"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+        <el-row :gutter="20">
+            <el-col :span="24">
+                <el-form-item label="档案编号">
+                    <el-input :placeholder="archives.employeeid" v-model="archives.employeeid" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="一级机构">
+                    <el-input :placeholder="archives.level1" v-model="archives.level1" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="6">
+                <el-form-item label="二级结构">
+                    <el-input :placeholder="archives.level2" v-model="archives.level2" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="8">
+                <el-form-item label="三级机构">
+                    <el-input :placeholder="archives.level3" v-model="archives.level3" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="职位分类">
+                    <el-input :placeholder="archives.category" v-model="archives.category" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+            <el-col :span="6">
+                <el-form-item label="职位名称">
+                    <el-input :placeholder="archives.namePosition" v-model="archives.namePosition" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+                <el-form-item label="职称">
+                    <el-select v-model="archives.title" placeholder="请选择">
+                        <el-option label="区域一" value="shanghai"></el-option>
+                        <el-option label="区域二" value="beijing"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="姓名">
+                    <el-input v-model="archives.employeeName"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="性别">
+                    <el-select v-model="archives.sex" placeholder="请选择">
+                        <el-option label="男" value="男"></el-option>
+                        <el-option label="女" value="女"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="EMAIL">
+                    <el-input v-model="archives.email" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="电话">
+                    <el-input v-model="archives.phone" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="QQ">
+                    <el-input v-model="archives.qq" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="手机">
+                    <el-input v-model="archives.mobilePhone" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="12">
+                <el-form-item label="住址">
+                    <el-input v-model="archives.address" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+                <el-form-item label="邮编">
+                    <el-input v-model="archives.postcode" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="国籍">
+                    <el-select v-model="archives.nationality" placeholder="请选择">
+                        <el-option label="中国" value="中国"></el-option>
+                        <el-option label="美国" value="美国"></el-option>
+                        <el-option label="日本" value="日本"></el-option>
+                        <el-option label="俄罗斯" value="俄罗斯"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="出身地">
+                    <el-input v-model="archives.origin" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="生日">
+                    <el-input v-model="archives.birth" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="民族">
+                    <el-select v-model="archives.people" placeholder="请选择">
+                        <el-option label="汉" value="汉"></el-option>
+                        <el-option label="壮族" value="壮族"></el-option>
+                        <el-option label="土家族" value="土家族"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+
+            <el-col :span="6">
+                <el-form-item label="宗教信仰">
+                    <el-select v-model="archives.people" placeholder="请选择">
+                        <el-option label="佛教" value="佛教"></el-option>
+                        <el-option label="基督教" value="基督教"></el-option>
+                        <el-option label="社会主义" value="社会主义"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="政治面貌">
+                    <el-select v-model="archives.people" placeholder="请选择">
+                        <el-option label="共青团员" value="共青团员"></el-option>
+                        <el-option label="共产党员" value="共产党员"></el-option>
+                        <el-option label="群众" value="群众"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="身份证">
+                    <el-input v-model="archives.identity" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="社会保障">
+                    <el-input v-model="archives.socialId" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="年龄">
+                    <el-input v-model="archives.age" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="学历">
+                    <el-select v-model="archives.education" placeholder="请选择">
+                        <el-option label="本科" value="本科"></el-option>
+                        <el-option label="研究生" value="研究生"></el-option>
+                        <el-option label="博士" value="博士"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="教育年限">
+                    <el-input-number v-model="archives.educationYear" @change="handleChange" :min="0" :max="30"
+                                     label=""></el-input-number>
+                </el-form-item>
+            </el-col>
+
+
+            <el-col :span="6">
+                <el-form-item label="学历专业">
+                    <el-select v-model="archives.professional" placeholder="请选择">
+                        <el-option label="计算机科学与技术" value="计算机科学与技术"></el-option>
+                        <el-option label="软件工程" value="软件工程"></el-option>
+                        <el-option label="口腔医学" value="口腔医学"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="薪酬标准">
+                    <el-select v-model="archives.salary" placeholder="请选择">
+                        <el-option label="7k" value="7k"></el-option>
+                        <el-option label="8k" value="8k"></el-option>
+                        <el-option label="9k" value="9k"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="开户行">
+                    <el-input v-model="archives.bankid" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="账号">
+                    <el-input v-model="archives.eaccount" placeholder=""></el-input>
+                </el-form-item>
+            </el-col>
+
+
+            <el-col :span="6">
+                <el-form-item label="复核人">
+                    <el-input :placeholder="archives.review" v-model="archives.review" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="复核时间">
+                    <el-input :placeholder="archives.openTime" v-model="archives.review" :disabled="true"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="特长">
+                    <el-select v-model="archives.specialty" placeholder="请选择">
+                        <el-option label="数据库" value="数据库"></el-option>
+                        <el-option label="Java" value="Java"></el-option>
+                        <el-option label="前端" value="前端"></el-option>
+                        <el-option label="其他" value="其他"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+                <el-form-item label="爱好">
+                    <el-select v-model="archives.hobby" placeholder="请选择">
+                        <el-option label="唱" value="唱"></el-option>
+                        <el-option label="跳" value="跳"></el-option>
+                        <el-option label="rapper" value="rapper"></el-option>
+                        <el-option label="篮球" value="篮球"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="档案附加">
+                    <el-upload
+                            class="upload-demo"
+                            drag
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            multiple>
+                        <i class="el-icon-upload"></i>
+                        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                        <div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过500kb</div>
+                    </el-upload>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="个人履历">
+                    <el-input type="textarea" v-model="archives.experience"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="家庭关系">
+                    <el-input type="textarea" v-model="archives.family"></el-input>
+                </el-form-item>
+            </el-col>
+
+            <el-col :span="24">
+                <el-form-item label="备注">
+                    <el-input type="textarea" v-model="archives.command"></el-input>
+                </el-form-item>
+            </el-col>
+
+
+        </el-row>
+    </el-form>
+
+</div>
+
+
+<script>
+    new Vue({
+        el: '#app',
+        mounted() {
+            //当页面完成后，就发送页面请求
+            this.getDateName()
+
+        },
+        methods: {
+            //图片上传
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
+            handleAvatarSuccess(res, file) {
+                this.imageUrl = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+
+            //登记
+            submitFrom() {
+                console.log(this.archives);
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/archives/registered",
+                    data: this.archives
+                }).then(resp => {
+                    if (resp.data == success) {
+                        this.$message({
+                            message: '登记成功',
+                            type: 'success'
+                        });
+                    }
+                    this.$message({
+                        message: '提交失败',
+                        type: 'success'
+                    });
+                })
+            },
+
+            getArchives(){
+                axios({
+                    method: 'get',
+                    url: 'http://localhost:8080/archives/getReexamine'
+                }).then(resp =>{
+                    this.archives = resp.data
+                })
+            },
+
+            getDateName() {
+                axios({
+                    method: 'get',
+                    url: 'http://localhost:8080/archives/registered',
+                }).then(resp => {
+                    this.openTime = resp.data.data.Time;
+                    this.review = resp.data.data.name;
+                })
+            },
+
+            //计数器
+            handleChange(value) {
+                console.log(value);
+            }
+        },
+
+        data() {
+            return {
+                //档案信息的类型
+                archives: {
+                    employeeid: '',
+                    level1: "",
+                    level2: "",
+                    level3: '',
+                    category: '',
+                    namePosition: '',
+                    title: '',
+                    employeeName: '',
+                    sex: '',
+                    nationality: '',
+                    people: '',
+                    birth: '',
+                    origin: '',
+                    identity: '',
+                    socialId: '',
+                    age: '',
+                    education: '',
+                    educationYear: '0',
+                    faith: '',
+                    status: '',
+                    professional: '',
+                    picture: '',
+                    email: '',
+                    phone: '',
+                    qq: '',
+                    mobilePhone: '',
+                    address: '',
+                    postcode: '',
+                    bankid: '',
+                    eaccount: '',
+                    openTime: '',
+                    specialty: '',
+                    hobby: '',
+                    experience: '',
+                    family: '',
+                    ecomment: '',
+                    salary: '',
+                    review: ''
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
